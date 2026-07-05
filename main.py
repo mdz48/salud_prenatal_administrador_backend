@@ -10,6 +10,7 @@ app = FastAPI(
     title="Salud Prenatal - Admin API",
     description="API exclusiva para administradores del sistema Salud Prenatal",
     version="1.0.0",
+    root_path="/admin",
 )
 app.container = container
 
