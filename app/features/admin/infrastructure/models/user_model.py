@@ -1,0 +1,22 @@
+from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String
+from sqlalchemy.sql import func
+
+from app.core.database import Base
+from app.core.enums import RoleEnum
+from app.core.security import EncryptedString
+
+
+class Usuario(Base):
+    __tablename__ = "users"
+
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(EncryptedString, nullable=False)
+    last_name = Column(EncryptedString, nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    phone = Column(EncryptedString, nullable=True)
+    password = Column(String(255), nullable=False)
+    role = Column(Enum(RoleEnum), nullable=False, default=RoleEnum.patient)
+    is_active = Column(Boolean, default=True)
+    image_url = Column(String(255), nullable=True, default=None)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

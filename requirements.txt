@@ -1,0 +1,12 @@
+fastapi[standard]
+uvicorn
+bcrypt==4.0.1
+SQLAlchemy
+python-dotenv
+passlib[bcrypt]
+psycopg2-binary
+python-jose[cryptography]
+cryptography
+dependency-injector
+httpx
+pytest
