@@ -1,10 +1,9 @@
 from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
-from app.core.database import Base
 from app.core.enums import RoleEnum
+from app.core.database import Base
 from app.core.security import EncryptedString
-
 
 class Usuario(Base):
     __tablename__ = "users"

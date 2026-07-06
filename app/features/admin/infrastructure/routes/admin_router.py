@@ -10,6 +10,7 @@ from app.core.enums import RoleEnum
 from app.features.admin.domain.admin_user_entity import AdminUserEntity
 from app.features.admin.infrastructure.controllers.admin_controller import AdminController
 from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse
+from app.features.admin.infrastructure.schemas.report_schema import ReportResponseSchema
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -77,3 +78,22 @@ def delete_user(
     controller: AdminController = Depends(Provide[Container.admin_controller]),
 ):
     return controller.delete_user(user_id)
+
+
+@router.get("/reports", response_model=List[ReportResponseSchema])
+@inject
+def get_all_reports(
+    current_admin: AdminUserEntity = Depends(get_current_admin),
+    controller: AdminController = Depends(Provide[Container.admin_controller]),
+):
+    return controller.get_all_reports()
+
+
+@router.get("/users/{user_id}/reports", response_model=List[ReportResponseSchema])
+@inject
+def get_user_reports(
+    user_id: int,
+    current_admin: AdminUserEntity = Depends(get_current_admin),
+    controller: AdminController = Depends(Provide[Container.admin_controller]),
+):
+    return controller.get_user_reports(user_id)

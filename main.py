@@ -1,4 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.database import SessionLocal, Base, get_engine
+from app.features.admin.infrastructure.models.user_model import Usuario
+from app.features.admin.infrastructure.models.report_model import ReportModel
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.containers import Container
@@ -10,7 +14,6 @@ app = FastAPI(
     title="Salud Prenatal - Admin API",
     description="API exclusiva para administradores del sistema Salud Prenatal",
     version="1.0.0",
-    root_path="/admin",
 )
 app.container = container
 
@@ -24,7 +27,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    finally:
+        SessionLocal.remove()
+
+
 
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "salud_prenatal_admin_backend"}
+
+# Crear tablas en la base de datos si no existen
+Base.metadata.create_all(bind=get_engine())

@@ -11,6 +11,9 @@ from app.features.admin.application.get_users_usecase import GetUsersUseCase
 from app.features.admin.application.login_admin_usecase import LoginAdminUseCase
 from app.features.admin.application.unban_user_usecase import UnbanUserUseCase
 from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse
+from app.features.admin.infrastructure.schemas.report_schema import ReportResponseSchema
+from app.features.admin.application.get_all_reports_usecase import GetAllReportsUseCase
+from app.features.admin.application.get_user_reports_usecase import GetUserReportsUseCase
 
 
 class AdminController:
@@ -22,6 +25,8 @@ class AdminController:
         ban_user_use_case: BanUserUseCase,
         unban_user_use_case: UnbanUserUseCase,
         delete_user_use_case: DeleteUserUseCase,
+        get_all_reports_use_case: GetAllReportsUseCase,
+        get_user_reports_use_case: GetUserReportsUseCase,
     ):
         self.login_admin_use_case = login_admin_use_case
         self.get_users_use_case = get_users_use_case
@@ -29,6 +34,8 @@ class AdminController:
         self.ban_user_use_case = ban_user_use_case
         self.unban_user_use_case = unban_user_use_case
         self.delete_user_use_case = delete_user_use_case
+        self.get_all_reports_use_case = get_all_reports_use_case
+        self.get_user_reports_use_case = get_user_reports_use_case
 
     def login(self, email: str, password: str) -> LoginResponse:
         try:
@@ -78,3 +85,11 @@ class AdminController:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+
+    def get_all_reports(self) -> List[ReportResponseSchema]:
+        reports = self.get_all_reports_use_case.execute()
+        return [ReportResponseSchema.model_validate(r) for r in reports]
+
+    def get_user_reports(self, user_id: int) -> List[ReportResponseSchema]:
+        reports = self.get_user_reports_use_case.execute(user_id)
+        return [ReportResponseSchema.model_validate(r) for r in reports]

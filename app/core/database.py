@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker, scoped_session
 
 load_dotenv()
 
@@ -27,8 +27,12 @@ def _resolve_database_url() -> str:
         probe.dispose()
         return url
     except Exception as e:
-        print(f"Error al conectar a la base de datos principal, usando LOCAL_URL: {e}")
-        return os.getenv("LOCAL_URL")
+        print(f"Error al conectar a la base de datos principal: {e}")
+        local_url = os.getenv("LOCAL_URL")
+        if not local_url:
+            raise e
+        print(f"Usando LOCAL_URL: {local_url}")
+        return local_url
 
 
 @lru_cache
@@ -41,9 +45,12 @@ def get_session_factory():
     return sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
 
 
+SessionLocal = scoped_session(get_session_factory())
+
+
 def get_db():
-    db = get_session_factory()()
+    db = SessionLocal()
     try:
         yield db
     finally:
-        db.close()
+        SessionLocal.remove()
