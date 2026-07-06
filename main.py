@@ -20,7 +20,7 @@ app = FastAPI(
 )
 app.container = container
 
-app.include_router(admin_router, prefix="/api/v1")
+app.include_router(admin_router, prefix="/api/v1/admin")
 
 app.add_middleware(
     CORSMiddleware,

@@ -9,7 +9,7 @@ from app.core.security import ALGORITHM, get_secret_key
 from app.features.admin.domain.admin_user_entity import AdminUserEntity
 from app.features.admin.domain.ports import IAdminUserRepository
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/admin/api/v1/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/admin/login")
 
 
 @inject
