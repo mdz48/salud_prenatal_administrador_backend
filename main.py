@@ -14,6 +14,9 @@ app = FastAPI(
     title="Salud Prenatal - Admin API",
     description="API exclusiva para administradores del sistema Salud Prenatal",
     version="1.0.0",
+    docs_url="/api/v1/admin/docs",
+    openapi_url="/api/v1/admin/openapi.json",
+    redoc_url="/api/v1/admin/redoc"
 )
 app.container = container
 
