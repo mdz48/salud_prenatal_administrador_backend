@@ -12,7 +12,7 @@ from app.features.admin.infrastructure.controllers.admin_controller import Admin
 from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse
 from app.features.admin.infrastructure.schemas.report_schema import ReportResponseSchema
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(tags=["Admin"])
 
 
 @router.post("/login", response_model=LoginResponse)
