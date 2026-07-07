@@ -1,4 +1,5 @@
 from app.core.enums import RoleEnum
+from app.features.admin.application.delete_user_usecase import is_deleted_email
 from app.features.admin.domain.admin_user_entity import AdminUserEntity
 from app.features.admin.domain.ports import IAdminUserRepository
 
@@ -13,4 +14,6 @@ class BanUserUseCase:
             raise LookupError("User not found")
         if user.role == RoleEnum.admin:
             raise PermissionError("Cannot modify an admin account")
+        if is_deleted_email(user.email):
+            raise ValueError("User is already deleted")
         return self.user_repository.set_active(user_id, False)

@@ -85,6 +85,8 @@ class AdminController:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
         except PermissionError as e:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+        except ValueError as e:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
     def unban_user(self, user_id: int) -> AdminUserResponse:
         try:
@@ -93,6 +95,8 @@ class AdminController:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
         except PermissionError as e:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+        except ValueError as e:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
     def delete_user(self, user_id: int) -> AdminUserResponse:
         try:
