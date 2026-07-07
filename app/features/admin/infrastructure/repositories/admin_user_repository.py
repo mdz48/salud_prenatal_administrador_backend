@@ -46,3 +46,13 @@ class AdminUserRepository(IAdminUserRepository):
         self.db.commit()
         self.db.refresh(user_db)
         return AdminUserEntity.model_validate(user_db)
+
+    def create(self, user: AdminUserEntity) -> AdminUserEntity:
+        user_data = user.model_dump(exclude_unset=True)
+        # Convert password to hashed before saving? No, wait, if the entity has password, it should already be hashed by usecase, or we hash it here?
+        # Actually it's better to hash in use case or somewhere else. The user entity we pass will have the hashed password.
+        new_user = Usuario(**user_data)
+        self.db.add(new_user)
+        self.db.commit()
+        self.db.refresh(new_user)
+        return AdminUserEntity.model_validate(new_user)

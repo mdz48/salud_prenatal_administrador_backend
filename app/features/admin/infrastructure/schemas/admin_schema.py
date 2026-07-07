@@ -6,6 +6,15 @@ from pydantic import BaseModel, ConfigDict
 from app.core.enums import RoleEnum
 
 
+class AdminUserCreate(BaseModel):
+    name: str
+    last_name: str
+    email: str
+    phone: Optional[str] = None
+    password: str
+    role: RoleEnum
+
+
 class AdminUserResponse(BaseModel):
     user_id: int
     name: str

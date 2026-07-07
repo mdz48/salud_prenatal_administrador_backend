@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 
 from app.core.database import get_db, SessionLocal
 from app.features.admin.application.ban_user_usecase import BanUserUseCase
+from app.features.admin.application.create_admin_usecase import CreateAdminUseCase
 from app.features.admin.application.delete_user_usecase import DeleteUserUseCase
 from app.features.admin.application.get_user_usecase import GetUserUseCase
 from app.features.admin.application.get_users_usecase import GetUsersUseCase
@@ -30,6 +31,7 @@ class Container(containers.DeclarativeContainer):
 
     # Use cases
     login_admin_use_case = providers.Factory(LoginAdminUseCase, user_repository=admin_user_repository)
+    create_admin_use_case = providers.Factory(CreateAdminUseCase, user_repository=admin_user_repository)
     get_users_use_case = providers.Factory(GetUsersUseCase, user_repository=admin_user_repository)
     get_user_use_case = providers.Factory(GetUserUseCase, user_repository=admin_user_repository)
     ban_user_use_case = providers.Factory(BanUserUseCase, user_repository=admin_user_repository)
@@ -43,6 +45,7 @@ class Container(containers.DeclarativeContainer):
     admin_controller = providers.Factory(
         AdminController,
         login_admin_use_case=login_admin_use_case,
+        create_admin_use_case=create_admin_use_case,
         get_users_use_case=get_users_use_case,
         get_user_use_case=get_user_use_case,
         ban_user_use_case=ban_user_use_case,

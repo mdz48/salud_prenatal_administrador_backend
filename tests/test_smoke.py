@@ -22,8 +22,10 @@ def test_users_requires_token(client):
 EXPECTED_ROUTES = [
     "/api/v1/admin/login",
     "/api/v1/admin/me",
+    "/api/v1/admin/reports",
     "/api/v1/admin/users",
     "/api/v1/admin/users/{user_id}",
     "/api/v1/admin/users/{user_id}/ban",
+    "/api/v1/admin/users/{user_id}/reports",
     "/api/v1/admin/users/{user_id}/unban",
 ]

@@ -4,13 +4,14 @@ from fastapi import HTTPException, status
 
 from app.core.enums import RoleEnum
 from app.features.admin.application.ban_user_usecase import BanUserUseCase
+from app.features.admin.application.create_admin_usecase import CreateAdminUseCase
 from app.features.admin.application.delete_user_usecase import DeleteUserUseCase
-from app.features.admin.application.dtos import LoginDTO
+from app.features.admin.application.dtos import LoginDTO, CreateAdminDTO
 from app.features.admin.application.get_user_usecase import GetUserUseCase
 from app.features.admin.application.get_users_usecase import GetUsersUseCase
 from app.features.admin.application.login_admin_usecase import LoginAdminUseCase
 from app.features.admin.application.unban_user_usecase import UnbanUserUseCase
-from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse
+from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse, AdminUserCreate
 from app.features.admin.infrastructure.schemas.report_schema import ReportResponseSchema
 from app.features.admin.application.get_all_reports_usecase import GetAllReportsUseCase
 from app.features.admin.application.get_user_reports_usecase import GetUserReportsUseCase
@@ -20,6 +21,7 @@ class AdminController:
     def __init__(
         self,
         login_admin_use_case: LoginAdminUseCase,
+        create_admin_use_case: CreateAdminUseCase,
         get_users_use_case: GetUsersUseCase,
         get_user_use_case: GetUserUseCase,
         ban_user_use_case: BanUserUseCase,
@@ -29,6 +31,7 @@ class AdminController:
         get_user_reports_use_case: GetUserReportsUseCase,
     ):
         self.login_admin_use_case = login_admin_use_case
+        self.create_admin_use_case = create_admin_use_case
         self.get_users_use_case = get_users_use_case
         self.get_user_use_case = get_user_use_case
         self.ban_user_use_case = ban_user_use_case
@@ -49,6 +52,21 @@ class AdminController:
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return LoginResponse(**result)
+
+    def create_admin(self, dto: AdminUserCreate) -> AdminUserResponse:
+        try:
+            admin_dto = CreateAdminDTO(
+                name=dto.name,
+                last_name=dto.last_name,
+                email=dto.email,
+                phone=dto.phone,
+                password=dto.password,
+                role=dto.role.value
+            )
+            created_admin = self.create_admin_use_case.execute(admin_dto)
+            return AdminUserResponse.model_validate(created_admin)
+        except ValueError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     def get_users(self, role: Optional[RoleEnum], is_active: Optional[bool]) -> List[AdminUserResponse]:
         users = self.get_users_use_case.execute(role=role, is_active=is_active)

@@ -9,7 +9,7 @@ from app.core.dependencies import get_current_admin
 from app.core.enums import RoleEnum
 from app.features.admin.domain.admin_user_entity import AdminUserEntity
 from app.features.admin.infrastructure.controllers.admin_controller import AdminController
-from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse
+from app.features.admin.infrastructure.schemas.admin_schema import AdminUserResponse, LoginResponse, AdminUserCreate
 from app.features.admin.infrastructure.schemas.report_schema import ReportResponseSchema
 
 router = APIRouter(tags=["Admin"])
@@ -27,6 +27,18 @@ def login(
 @router.get("/me", response_model=AdminUserResponse)
 def get_me(current_admin: AdminUserEntity = Depends(get_current_admin)):
     return AdminUserResponse.model_validate(current_admin)
+
+
+@router.post("/users", response_model=AdminUserResponse)
+@inject
+def create_admin(
+    dto: AdminUserCreate,
+    current_admin: AdminUserEntity = Depends(get_current_admin),
+    controller: AdminController = Depends(Provide[Container.admin_controller]),
+):
+    # Depending on requirements, we might want to restrict this to SUPERADMIN role.
+    # Assuming any admin can create another admin for now.
+    return controller.create_admin(dto)
 
 
 @router.get("/users", response_model=List[AdminUserResponse])
